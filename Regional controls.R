@@ -35,7 +35,7 @@ base_path <- "D:/Popurbc"
 # Check what base_path should be
 list.files("D:/Popurbc")
 
-# Check what's actually inside one folder
+# Checking what's actually inside one folder
 list.files("D:/Popurbc/2023AD_pop")
 
 hyde_list <- list()
@@ -130,11 +130,6 @@ view(panel1)
 
 write.csv(panel1, "real_panel.csv")
 
- # Very nice.
-
- 
- # Wrangling of nightlight data has been done using Python - google colab
- # saved in moz file as nightlight_panel
 
 
 
@@ -206,203 +201,8 @@ view(full_panel)
 write.csv(full_panel, "full_panel_cgado.csv")
  
 
-# WELLDONE SO FAR ---------------------------------------------------------
-
 
 # Creating a descriptive statistics table ---------------------------------
-
-# OPTION 1
-
-library(kableExtra)
-library(dplyr)
-
-# Build stats manually
-stats_table <- full_panel %>%
-  as.data.frame() %>%
-  select(
-    "Flood Severity"             = Severity,
-    "log(Displaced+1)"           = Log_Displaced,
-    "Displaced Persons"          = Displaced,
-    "Conflict Events"            = Conflict,
-    "Riots"                      = Riots,
-    "Violence Against Civilians" = Violence,
-    "Battles"                    = Battles,
-    "Fatalities"                 = Fatalities,
-    "Population density"         = Pop_density,
-    "Urbanization"               = Urban_pop,
-    "Nighttime light"            = Nightlight,
-  ) %>%
-  summarise(across(everything(), list(
-    Mean = ~round(mean(., na.rm=TRUE), 2),
-    SD   = ~round(sd(., na.rm=TRUE), 2),
-    Min  = ~round(min(., na.rm=TRUE), 2),
-    Max  = ~round(max(., na.rm=TRUE), 2)
-  ))) %>%
-  tidyr::pivot_longer(everything(),
-                      names_to = c("Variable", ".value"),
-                      names_pattern = "(.+)_(Mean|SD|Min|Max)"
-  )
-
-# Render table
-stats_table %>%
-  kable(
-    format = "html",
-    caption = "Table 1: Descriptive Statistics",
-    col.names = c("Variable", "Mean", "Std. Dev.", "Min", "Max"),
-    align = c("l", "r", "r", "r", "r"),
-    digits = 2
-  ) %>%
-  kable_styling(
-    bootstrap_options = c("striped", "hover", "condensed"),
-    full_width = FALSE,
-    font_size = 13,
-    position = "center"
-  ) %>%
-  row_spec(0, bold = TRUE, background = "#1B6B3A", color = "white") %>%
-  footnote(
-    general = "Note: 637 district-year observations. Cabo Delgado province excluded due to structurally distinct Islamist insurgency dynamics.",
-    general_title = "",
-    footnote_as_chunk = TRUE
-  )
-
-
-# OPTION 2
-
-library(stargazer)
-
-my_data2 %>%
-  as.data.frame() %>%
-  select(Severity, Displaced, 
-         Conflict, Riots, Violence, Battles) %>%
-  stargazer(
-    type = "text",  # change to "latex" for thesis
-    title = "Table 1: Descriptive Statistics",
-    digits = 2,
-    summary.stat = c("Mean", "SD", "Min", "Max", "N"),
-    covariate.labels = c(
-      "Flood Severity",
-      "log(Displaced+1)",
-      "Displaced Persons",
-      "Conflict Events",
-      "Riots",
-      "Violence Against Civilians",
-      "Battles",
-      "Fatalities"
-    ),
-    notes = "Note: 580 district-year observations. Cabo Delgado excluded.",
-    notes.align = "l"
-  )
-
-# OPTION 3
-
-library(modelsummary)
-library(kableExtra)
-
-datasummary(
-  Severity + Log_Displaced + Conflict + Riots + Violence + Battles + Fatalities + Displaced ~
-    Mean + SD + Min + Max + N,
-  data = full_panel,
-  title = "Table 1: Descriptive Statistics",
-  fmt = 2,  # 2 decimal places
-  output = "kableExtra"
-) %>%
-  kable_styling(
-    bootstrap_options = c("striped", "hover", "condensed"),
-    full_width = FALSE,
-    font_size = 12
-  ) %>%
-  add_header_above(c(" " = 1, "Summary Statistics" = 5)) %>%
-  footnote(
-    general = "Note: Statistics computed for 580 district-year observations. Cabo Delgado excluded.",
-    general_title = ""
-  )
-
-# OPTION 4
-
-library(kableExtra)
-library(dplyr)
-
-stats_table <- full_panel %>%
-  as.data.frame() %>%
-  select(
-    "Flood Severity"             = Severity,
-    "log(Displaced+1)"           = Log_Displaced,
-    "Displaced Persons"          = Displaced,
-    "Conflict Events"            = Conflict,
-    "Riots"                      = Riots,
-    "Violence Against Civilians" = Violence,
-    "Battles"                    = Battles,
-    "Fatalities"                 = Fatalities,
-    "Population Density"         = Pop_density,
-    "Urbanization count"         = Urban_pop,
-    "Nightlight Intensity"       = Nightlight
-  ) %>%
-  summarise(across(everything(), list(
-    Mean = ~round(mean(., na.rm=TRUE), 2),
-    SD   = ~round(sd(., na.rm=TRUE), 2),
-    Min  = ~round(min(., na.rm=TRUE), 2),
-    Max  = ~round(max(., na.rm=TRUE), 2)
-  ))) %>%
-  tidyr::pivot_longer(
-    everything(),
-    names_to  = c("Variable", ".value"),
-    names_pattern = "(.+)_(Mean|SD|Min|Max)"
-  )
-
-stats_table %>%
-  kable(
-    format    = "html",
-    caption   = "Table 1: Descriptive Statistics",
-    col.names = c("Variable", "Mean", "Std. Dev.", "Min", "Max"),
-    align     = c("l", "r", "r", "r", "r"),
-    digits    = 2
-  ) %>%
-  kable_styling(
-    bootstrap_options = c("striped", "hover", "condensed"),
-    full_width        = FALSE,
-    font_size         = 13,
-    position          = "center"
-  ) %>%
-  row_spec(0, bold = TRUE, color = "white") %>%
-  pack_rows("Flood Variables",    1, 3)  %>%
-  pack_rows("Conflict Variables", 4, 8)  %>%
-  pack_rows("Regional Controls",  9, 11) %>%
-  footnote(
-    general        = "Note: 580 district-year observations. Cabo Delgado province excluded due to structurally distinct Islamist insurgency dynamics.",
-    general_title  = "",
-    footnote_as_chunk = TRUE
-  )
- 
-
-library(modelsummary)
-library(kableExtra)
-
-datasummary(
-  Severity + Log_Displaced + Displaced + 
-    Conflict + Riots + Violence + Battles + Fatalities +
-    Pop_density + Urban_pop + Nightlight ~
-    Mean + SD + Min + Max,
-  data = full_panel,
-  title = "Table 1: Descriptive Statistics",
-  fmt = 2,
-  output = "kableExtra"
-) %>%
-  kable_styling(
-    bootstrap_options = c("striped", "hover", "condensed"),
-    full_width = FALSE,
-    font_size = 12
-  ) %>%
-  add_header_above(c(" " = 1, "Summary Statistics" = 4)) %>%
-  pack_rows("Conflict Variables", 4, 8) %>%
-  pack_rows("Flood Variables", 1, 3) %>%
-  pack_rows("Regional Controls", 9, 11) %>%
-  footnote(
-    general = "Note: 637 district-year observations. Cabo Delgado excluded.",
-    general_title = ""
-  ) 
- 
- 
-
 
 library(kableExtra)
 library(dplyr)
@@ -480,16 +280,12 @@ stats_df %>%
     footnote_as_chunk = FALSE
   ) 
 
-
-library(kableExtra)
-
-latex_table <- stats_df %>%
+stats_df %>%
   kable(
-    format    = "latex",
-    booktabs  = TRUE,
-    caption   = "Descriptive statistics for District-Year Panel, Mozambique 1998--2023.",
+    format    = "html",
+    caption   = "Table 1: Descriptive statistics for District-Year Panel, Mozambique 1998–2023.",
     col.names = c("", "Mean", "Std. Dev.", "Min", "Max", "N"),
-    align     = c("l", "r", "r", "r", "r", "r"),
+    align     = c("l","r", "r", "r", "r", "r"),
     digits    = 2
   ) %>%
   kable_styling(
