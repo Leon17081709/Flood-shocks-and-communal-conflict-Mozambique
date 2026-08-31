@@ -10,7 +10,7 @@ i) H0: Greater flood severity and higher levels of flood-induced displacement ar
 ii) H1: The effects of flood severity and flood-induced displacement on the incidence of communal conflict vary across the regions in Mozambique.
 
 # Data sources
-i) Dartmouth Flood Observatory (DFO), Armed Conflict and Event Data (ACLED), 
+i) Dartmouth Flood Observatory (DFO), Armed Conflict and Event Data (ACLED), and HYDE 3.3
 
 # Variables
 i) Dependent variable: Communal conflict
