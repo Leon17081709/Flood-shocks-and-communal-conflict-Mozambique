@@ -5,7 +5,7 @@
 install.packages("naniar")
 install.packages("psych")
 install.packages("skimr")
-library(naniar)                      # Special for missing variables
+library(naniar)                     
 library(ggplot2)
 library(AER)
 library(ggpubr)
@@ -205,28 +205,6 @@ describe(panel1)
 
 skim(panel1) # Very useful to understand variable types factor;numeric;etc)
 
-
-# Timetrend of the variable
-
-panel1 %>%
-  group_by(Year) %>%
-  summarise(
-    mean_severity = mean(Severity, na.rm=TRUE),
-    mean_conflict = mean(Conflict, na.rm=TRUE),
-    total_log_displaced = sum(Log_Displaced, na.rm=TRUE)
-  ) %>%
-  ggplot(aes(x = Year)) +
-  geom_line(aes(y = scale(mean_severity), color = "Flood Severity"), linewidth = 1.2) +
-  geom_line(aes(y = scale(mean_conflict), color = "Conflict"), linewidth = 1.2) +
-  geom_line(aes(y = scale(total_log_displaced), color = "Displaced"), linewidth = 1.2) +
-  scale_color_manual(values = c("Flood Severity" = "steelblue", "Conflict" = "red", "Displaced" = "black")) +
-  labs(
-    title = "Standardised Trends: Flood Severity and Conflict Over Time",
-    subtitle = "District-level means, standardised for comparability",
-    y = "Standardised Value", x = "Year", color = ""
-  )
-
-
 datasummary(
   Severity + log1p(Displaced) + Conflict ~
      (Min + Max + Mean + Median + SD + kurtosis + skewness + N),
@@ -256,20 +234,10 @@ panel2 <- panel1 %>%
   ) %>%
   ungroup()
 
-mundlak.model <- plm(
-  Conflict ~ Severity + log1p(Displaced) + mean_severity + mean_displaced,
-  data = panel2,
-  model = "random",
-  index = c("District_Id", "Year")
-)
 
-summary(mundlak.model)
-
-linearHypothesis(mundlak.model, c("mean_severity = 0", "mean_displaced = 0"))
 
 
 # UNDERSTANDING THE STRUCTURE OF MISSING DATA -----------------------------
-
 
 
 # Create a missing indicator
@@ -305,8 +273,6 @@ p.data <- p.data %>%
 
 summary(glm(missing_conflict ~ Severity + Displaced + Province + Year, data = p.data,
                             family = binomial))
-
-
 
 
 # Inner_join
