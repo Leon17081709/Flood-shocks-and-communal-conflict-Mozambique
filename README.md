@@ -13,17 +13,18 @@ ii) H1: The effects of flood severity and flood-induced displacement on the inci
 i) Dartmouth Flood Observatory (DFO), Armed Conflict and Event Data (ACLED), and HYDE 3.3
 
 # Variables
-i) Dependent variable: Communal conflict
-ii) Independent variables: Flood severity, Displaced persons and Displaced persons dummy, 1 if displacement is positive, 0 otherwise.
+i) Dependent variable: Communal conflict, Displaced persons and Displaced persons dummy, 1 if displacement is positive, 0 otherwise.
+ii) Independent variables: Flood severity 
 iii) Regional controls: Urbanization, Population Density and Nightlight time (as a proxy for level of economic activity)
 
 # Empirical strategy
 Fixed Effects Poisson Model
+Linear Probability Model
 
 # Main findings
 i) Flood severity is associated with an increase in expected number of conflict events holding other variables constant (Consistent with H0) 
 ii) Observations with positive displacement are associated with fewer number of conflict events than those with zero displacement holding other variables constant (Inconsistent with H0)
-iii) No statistical evidence that the effect of flood severity and flood-induced displacement on conflict vary across the regions in Mozambique. This is consistent with the Joint Wald Test used to assess the regional heterogeneity(Inconsistent with H1)
+iii) No statistical evidence that the effect of flood severity on conflict vary across the regions in Mozambique. This is consistent with the Joint Wald Test used to assess the regional heterogeneity(Inconsistent with H1)
 
 # Software
 R programming
