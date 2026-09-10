@@ -3,7 +3,7 @@ The aim of this research is to examine the relationship between flood shocks, co
 
 # Research Questions.
 i) Do flood shocks trigger conflict in Mozambique?
-ii) Do the effect of flood severity and flood-induced displacement on conflict vary across the regions in Mozambique? (Regional heterogeneity)
+ii) Do the effect of flood severity on conflict outcomes vary across the regions in Mozambique? (Regional heterogeneity)
 
 # Hypotheses.
 i) H0: Greater flood severity ia associated with higher incidence of communal conflicts at district level.
