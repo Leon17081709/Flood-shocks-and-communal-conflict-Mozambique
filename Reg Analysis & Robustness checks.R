@@ -188,19 +188,6 @@ modelsummary(list("(1)" = FE8, "(2)" = FE9),
              stars = TRUE, fmt = 3, statistic = c("p.value", "std.error"))
 
 
-# Wald-type joint test on both interaction terms simultaneously
-# Useful test to know whether; the effect of flood severity on conflict 
-# is the same across all 3 regions — C and S don't differ from the N baseline
-
-wald(FE9, keep = "Severity.*factor\\(Region\\)")
-
-# p-value = 0.268, Fail to reject the H0.
-
-# Similarly;Useful test to know whether; the effect of displaced on conflict 
-# is the same (no significant difference) across all 3 regions — C and S don't differ from the N baseline 
-# \\d: keep any digit 0-9.
-
-
 
 modelsummary(
   list("Without Clustering" = FE8, "Clustered SE" = FE9),
@@ -215,9 +202,6 @@ modelsummary(
     "Severity:factor(Region)2"       = "Severity × Region 2 (Centre)",
     "Severity:factor(Region)3"       = "Severity × Region 3 (South)"
   ))
-
-
-
 
 
 
@@ -254,10 +238,6 @@ modelsummary(("(1)"= FEG), stars = T, fmt = 3,
 
 
 
-
-
-
-
 # ROBUSTNESS WITHOUT DISPLACEMENT VARIABLE --------------------------------
 
 FEK <- fepois(Conflict ~ Severity + Displaced + Displaced_dummy +
@@ -286,7 +266,6 @@ modelsummary(("(1)"= FEP), stars = TRUE,
               fmt = 3, statistic = c("p.value", "std.error"))
 
 wald(FEP, keep = "Severity:factor\\(Region\\)")
-
 
 
 
@@ -327,8 +306,7 @@ wald(FET, keep = "Severity:factor\\(Region\\)")
 
 # DISPLACEMENT AS DEPENDENT VARIABLE (FE POISSON MODEL) ----------
 
-# This approach is to understand the mechanism, perhaps displacement is
-# affected by flood severity.
+# This approach is to understand the mechanism, perhaps displacement is affected by flood severity.
 
 class(my_data2$Displaced)
 is.integer(my_data2$Displaced)
@@ -346,7 +324,6 @@ modelsummary(("FE Extension" = FEE),
 
 # Flood severity is associated with increase in expected number of people
 # displaced by (0.715, equals to 104.4%)
-
 
 
 
@@ -424,8 +401,6 @@ modelsummary(
   )
 
 
-
-
 # Plotting predicted probs vs. deviation from mean severity ---------------
 
 my_data2$Sev_dev <- my_data2$Severity - 
@@ -466,133 +441,6 @@ ggplot(my_data2, aes(x = Sev_dev, y = Prob_hat)) +
     axis.title.y = element_text(size = 9),
     legend.text = element_text(size = 9)
   )
-
-
-# Re-run the whole sample with Cabo Delgado Province included.
-
-my_data3 <- read.csv("full_panel_cgado.csv")
-
-view(my_data3)
-
-Ols <- lm(Conflict ~ Severity + Log_Displaced, data = my_data3)
-summary(Ols)
-
-# Test for heteroscedasticity
-
-res <- residuals(Ols)
-
-a <- ggplot(data = my_data2, aes(x = Severity, y = res)) + geom_point(col = "blue") +
-  geom_abline(slope = 0) + theme_minimal() +
-  labs(title = "Residuals against Severity")
-
-b <- ggplot(data = my_data2, aes(x = Log_Displaced, y = res)) + geom_point(col = "blue") +
-  geom_abline(slope = 0) + theme_minimal() +
-  labs(title = "Residuals against Log_Displaced")
-
-(a | b)
-
-
-e <- ggplot(my_data2, aes(x = Severity, y = Conflict)) +
-  geom_point(col = "blue") +
-  geom_smooth(method = "lm", se = FALSE, col = "firebrick") + 
-  labs(title = "Conflict vs. severity relationship (A)") + theme_minimal()
-
-f <- ggplot(my_data2, aes(x = Log_Displaced, y = Conflict)) +
-  geom_point(col = "blue") +
-  geom_smooth(method = "lm", se = FALSE, col = "firebrick") +
-  labs(title = "Conflict vs. Log_Displaced relationship (B)") + theme_minimal()
-
-e
-f
-e + f
-
-bgtest(Ols)  # Homoskedasticity being the null hypothesis: We fail to reject (p-value > .05)
-
-# FE POISSON REGRESSION : FIRST QUESTION. ---------------------------------
-
-# Without Clustered Standard Errors.
-
-FE9 <- fepois(Conflict ~ Severity, data = my_data2)
-
-FE10 <- fepois(Conflict ~ Severity + Log_Displaced, data = my_data2)
-
-FE11 <- fepois(Conflict ~ Severity + Log_Displaced + Pop_density + Nightlight +
-                 Urban_pop, data = my_data2)
-
-FE12 <- fepois(Conflict ~ Severity + Log_Displaced + Pop_density + Nightlight +
-                 Urban_pop | District_Id + Year, data = my_data2)
-
-modelsummary(list("(1)" = FE9, "(2)" = FE10, "(3)" = FE11, "(4)" = FE12),
-             stars = TRUE, fmt = 3, statistic =c("p.value", "std.error"))
-
-
-# With Clustered Standard Errors.
-
-my_data3 <- my_data3 %>% 
-  mutate(
-    Displaced_dummy = ifelse(Displaced > 0, 1, 0)
-  )
-
-view(my_data3)
-
-FE15 <- fepois(Conflict ~ Severity + Displaced + Displaced_dummy + Pop_density + Nightlight +
-                 Urban_pop | District_Id + Year, data = my_data3)
-
-FE16 <- fepois(Conflict ~ Severity + Displaced + Displaced_dummy + Pop_density + Nightlight +
-                 Urban_pop | District_Id + Year, data = my_data3, vcov = ~ District_Id)
-
-summary(FE16)
-
-modelsummary(list("(1)" = FE15, "(2)" = FE16),
-             stars = TRUE, fmt = 3, statistic =c("p.value", "std.error"))
-
-
-# Checking confidence intervals.
-
-confint(FE7)["Severity", ]
-confint(FE16)["Severity", ]
-
-
-# Answers to second research question
-
-FE17 <- fepois(Conflict ~ Severity + Severity:factor(Region) +
-                 Displaced + Displaced:factor(Region) +
-                 Displaced_dummy + Displaced_dummy:factor(Region)+
-                 Pop_density + Nightlight + Urban_pop |
-                 District_Id + Year, data = my_data3)
-
-FE18 <- fepois(Conflict ~ Severity + Severity:factor(Region) +
-                 Displaced + Displaced:factor(Region) +
-                 Displaced_dummy + Displaced_dummy:factor(Region)+
-                 Pop_density + Nightlight + Urban_pop |
-                 District_Id + Year, data = my_data3, vcov = ~ District_Id)
-FE18
-
-modelsummary(list("Without clustering" = FE17, "Clustered SE" = FE18),
-             stars = TRUE, fmt = 3, statistic = c("p.value", "std.error"),
-             coef_rename = c(
-               "Severity"                       = "Flood Severity",
-               "Displaced"                      = "Displaced",
-               "Displaced_dummy"                = "Displaced_dummy",
-               "Pop_density"                    = "Population Density",
-               "Nightlight"                     = "Nightlight",
-               "Urban_pop"                      = "Urbanization",
-               "Severity:factor(Region)2"       = "Severity × Region 2 (Centre)",
-               "Severity:factor(Region)3"       = "Severity × Region 3 (South)",
-               "factor(Region)2:Displaced"      = "Displaced × Region 2 (Centre)",
-               "factor(Region)3:Displaced"      = "Displaced × Region 3 (South)",
-               "factor(Region)2:Displaced_dummy" = "Displaced_dummy × Region 2 (Centre)",
-               "factor(Region)3:Displaced_dummy" = "Displaced_dummy × Region 3 (South)"))
-             
-
-wald(FE18, keep = "Severity.*factor\\(Region\\)")
-
-wald(FE18, keep = "factor\\(Region\\)\\d:Displaced$")
-
-wald(FE18, keep = "factor\\(Region\\)\\d:Displaced_dummy")
-
-# We fail to reject the null too: p = 0.22, 0.77 and 0.81 respectively.
-
 
 
 
