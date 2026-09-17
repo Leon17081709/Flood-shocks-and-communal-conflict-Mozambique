@@ -20,8 +20,7 @@ ii) Independent variables: Flood severity
 iii) Regional controls: Urbanization, Population Density and Nightlight time (as a proxy for level of economic activity)
 
 # Empirical strategy
-Fixed Effects (FE) Poisson Model
-Linear Probability Model (LPM)
+Fixed Effects (FE) Poisson and Linear Probability Models (LPM).
 
 # Main findings
 i) Flood shocks are associated with an increase in expected number of conflict events holding other variables constant (Consistent with H0) 
