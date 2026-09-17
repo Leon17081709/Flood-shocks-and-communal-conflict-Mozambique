@@ -166,7 +166,7 @@ geom_sf(data = dfo_clipped, fill = NA,
 
 
 
-# A MAP OF AFRICA WITH MOZA IN IT -----------------------------------------
+# A MAP OF AFRICA WITH MOZAMBIQUE IN IT -----------------------------------------
 
 
 
