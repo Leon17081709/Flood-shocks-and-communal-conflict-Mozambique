@@ -25,7 +25,7 @@ Linear Probability Model (LPM)
 
 # Main findings
 i) Flood shocks are associated with an increase in expected number of conflict events holding other variables constant (Consistent with H0) 
-ii) The effect of flood shocks on communal conflict vary across the regions in Mozambique with the relationship more pronounced in the Southern region due to its spatial characteristics i.e., it lies along the major river systems including Zambezi and Limpopo basins (Consistent with the H0)
+ii) The effect of flood shocks on communal conflict vary across the regions in Mozambique with the relationship more pronounced in the Southern region (Consistent with the H0)
 iii) Flood shocks trigger population resettlement (magnitude) in Mozambique but do not affect the probability/ likelihood that displacement occurs.
 
 # Software
